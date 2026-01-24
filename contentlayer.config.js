@@ -86,9 +86,33 @@ export const Blog = defineDocumentType(() => ({
 	computedFields,
 }));
 
+export const Announcement = defineDocumentType(() => ({
+	name: "Announcement",
+	filePathPattern: "./announcements/**/*.mdx",
+	contentType: "mdx",
+	fields: {
+		published: {
+			type: "boolean",
+		},
+		title: {
+			type: "string",
+			required: true,
+		},
+		description: {
+			type: "string",
+			required: true,
+		},
+		date: {
+			type: "date",
+			required: true,
+		},
+	},
+	computedFields,
+}));
+
 export default makeSource({
 	contentDirPath: "./content",
-	documentTypes: [Page, Project, Blog],
+	documentTypes: [Page, Project, Blog, Announcement],
 	mdx: {
 		remarkPlugins: [remarkGfm],
 		rehypePlugins: [
