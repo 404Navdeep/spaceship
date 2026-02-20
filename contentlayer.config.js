@@ -86,9 +86,69 @@ export const Blog = defineDocumentType(() => ({
 	computedFields,
 }));
 
+export const Writing = defineDocumentType(() => ({
+	name: "Writing",
+	filePathPattern: "./writings/**/*.mdx",
+	contentType: "mdx",
+	fields: {
+		published: {
+			type: "boolean",
+		},
+		title: {
+			type: "string",
+			required: true,
+		},
+		description: {
+			type: "string",
+			required: true,
+		},
+		date: {
+			type: "date",
+			required: true,
+		},
+		coverImage: {
+			type: "string",
+		},
+		amazonUrl: {
+			type: "string",
+		},
+		pdfUrl: {
+			type: "string",
+		},
+	},
+	computedFields: {
+		...computedFields,
+		wordCount: {
+			type: "number",
+			resolve: (doc) => {
+				// Strip MDX syntax and count words
+				const text = doc.body.raw
+					.replace(/```[\s\S]*?```/g, "") // Remove code blocks
+					.replace(/---[\s\S]*?---/g, "") // Remove frontmatter
+					.replace(/[*_`~\[\]()#]/g, "") // Remove markdown syntax
+					.replace(/\s+/g, " "); // Normalize whitespace
+				return text.split(" ").filter((word) => word.length > 0).length;
+			},
+		},
+		readingTime: {
+			type: "number",
+			resolve: (doc) => {
+				// Assume 200 words per minute
+				const text = doc.body.raw
+					.replace(/```[\s\S]*?```/g, "")
+					.replace(/---[\s\S]*?---/g, "")
+					.replace(/[*_`~\[\]()#]/g, "")
+					.replace(/\s+/g, " ");
+				const wordCount = text.split(" ").filter((word) => word.length > 0).length;
+				return Math.ceil(wordCount / 200);
+			},
+		},
+	},
+}));
+
 export default makeSource({
 	contentDirPath: "./content",
-	documentTypes: [Page, Project, Blog],
+	documentTypes: [Page, Project, Blog, Writing],
 	mdx: {
 		remarkPlugins: [remarkGfm],
 		rehypePlugins: [
