@@ -44,6 +44,11 @@ export const metadata: Metadata = {
   icons: {
     shortcut: "/favicon.png",
   },
+  alternates: {
+    types: {
+      "application/rss+xml": "https://navdeep.online/api/rss",
+    },
+  },
 };
 const inter = Inter({
   subsets: ["latin"],
